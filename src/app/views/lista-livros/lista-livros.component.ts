@@ -15,9 +15,8 @@ export class ListaLivrosComponent {
   ) { }
 
   buscarLivros() {
-    this.livroService.buscar(this.campoBusca);
+    this.livroService.buscar(this.campoBusca).subscribe((retornoAPI) => {
+      console.log(retornoAPI);
+    });
   }
 }
-
-
-
