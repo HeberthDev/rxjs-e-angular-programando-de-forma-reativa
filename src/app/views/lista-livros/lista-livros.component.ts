@@ -15,9 +15,10 @@ export class ListaLivrosComponent {
   ) { }
 
   buscarLivros() {
-    this.livroService.buscar(this.campoBusca).subscribe(
-      (retornoAPI) => console.log(retornoAPI),
-      (error) => console.log(error),
-    );
+    this.livroService.buscar(this.campoBusca).subscribe({
+      next: retornoAPI => console.log(retornoAPI),
+      error: erro => console.log(erro),
+      complete: () => console.log('Observable completado!'),
+    });
   }
 }
