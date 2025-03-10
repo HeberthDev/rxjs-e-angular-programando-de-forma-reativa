@@ -1,5 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { FormControl } from '@angular/forms';
+import { map, Subscription, switchMap } from 'rxjs';
 import { Item, Livro } from 'src/app/models/interfaces';
 import { LivroVolumeInfo } from 'src/app/models/livroVolumeInfo';
 import { LivroService } from 'src/app/service/livro.service';
@@ -11,7 +12,7 @@ import { LivroService } from 'src/app/service/livro.service';
 })
 export class ListaLivrosComponent implements OnDestroy {
   public listaLivros: Livro[];
-  public campoBusca = '';
+  public campoBusca = new FormControl();
 
   private subscription: Subscription;
   private livro: Livro;
@@ -24,14 +25,21 @@ export class ListaLivrosComponent implements OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  public buscarLivros() {
-    this.subscription = this.livroService.buscar(this.campoBusca).subscribe({
-      next: (items) => {
-        this.listaLivros = this.livrosResultadoParaLivros(items);
-      },
-      error: erro => console.log(erro),
-    });
-  }
+  livrosEncontrados$ = this.campoBusca.valueChanges
+    .pipe(
+      switchMap((valorDigitado) => this.livroService.buscar(valorDigitado)),
+      map((items) => this.listaLivros = this.livrosResultadoParaLivros(items))
+    )
+
+  // public buscarLivros() {
+  //   this.subscription = this.livroService.buscar(this.campoBusca).subscribe({
+  //     next: (items) => {
+  //       console.log('Requisições');
+  //       this.listaLivros = this.livrosResultadoParaLivros(items);
+  //     },
+  //     error: erro => console.log(erro),
+  //   });
+  // }
 
   public livrosResultadoParaLivros(items: Item[]): LivroVolumeInfo[] {
     return items.map(item => {

@@ -4,8 +4,7 @@
   <div class="busca">
     <input
       type="search"
-      [(ngModel)]="campoBusca"
-      (keyup)="buscarLivros()"
+      [formControl]="campoBusca"
     >
 
     <button>
