@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { catchError, debounceTime, filter, map, switchMap, tap, throwError } from 'rxjs';
+import { catchError, debounceTime, EMPTY, filter, map, switchMap, tap, throwError } from 'rxjs';
 import { Item } from 'src/app/models/interfaces';
 import { LivroVolumeInfo } from 'src/app/models/livroVolumeInfo';
 import { LivroService } from 'src/app/service/livro.service';
@@ -12,6 +12,7 @@ import { LivroService } from 'src/app/service/livro.service';
 })
 export class ListaLivrosComponent {
   public campoBusca = new FormControl();
+  public mensagemErro = '';
 
   private pausa = 300;
 
@@ -28,9 +29,9 @@ export class ListaLivrosComponent {
       tap((retornoAPI) => console.log(retornoAPI)),
       map((items) => this.livrosResultadoParaLivros(items)),
       catchError(erro => {
-        console.log(erro)
-        return throwError(() => new Error('Ops, ocorreu um erro'));
-      })
+        this.mensagemErro = 'Ops, ocorreu um erro. Recarregue a aplicação.';
+        return EMPTY;
+      }),
     )
 
   public livrosResultadoParaLivros(items: Item[]): LivroVolumeInfo[] {
